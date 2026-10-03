@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structural BOQ Takeoff System - คานหลายช่วงและเสา</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Kanit & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- SheetJS Library for Real .XLSX Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbebe',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            900: '#78350f',
+                            dark: '#0f172a',
+                            card: '#1e293b',
+                            accent: '#334155'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Kanit', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #090d16;
+            color: #f8fafc;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f59e0b;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100 antialiased">
+
+    <!-- Top Header -->
+    <header class="bg-slate-900/90 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-amber-600 to-amber-400 text-slate-950 p-2.5 rounded-xl font-black text-xl shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-diagram-project"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-100 leading-tight">STRUCTURAL BOQ TAKEOFF</h1>
+                    <p class="text-[11px] text-amber-400">คานหลายช่วง, คานยื่น & เสา (กำหนดสัดส่วน L/x + ดัดงอตอม่อมาตรฐานอัตโนมัติ)</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <!-- Refresh / Recalculate Button -->
+                <button onclick="calculateAll(); showToast('คำนวณและรีเฟรชข้อมูลเรียบร้อย!');" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow-lg shadow-amber-500/20" title="รีเฟรชและคำนวณใหม่">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span class="hidden sm:inline">รีเฟรชคำนวณ</span>
+                </button>
+
+                <!-- Import JSON -->
+                <button onclick="triggerJSONImport()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-file-import text-amber-400"></i>
+                    <span class="hidden md:inline">นำเข้า JSON</span>
+                </button>
+                <input type="file" id="json-file-input" accept=".json" class="hidden" onchange="importFromJSON(event)">
+
+                <!-- Export JSON -->
+                <button onclick="exportToJSON()" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs font-semibold rounded-xl transition flex items-center space-x-1.5">
+                    <i class="fa-solid fa-floppy-disk text-amber-400"></i>
+                    <span class="hidden md:inline">บันทึก JSON</span>
+                </button>
+
+                <!-- Export Excel (.xlsx) -->
+                <button onclick="exportToExcel()" class="px-3.5 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 text-xs font-semibold rounded-xl transition flex items-center space-x-2">
+                    <i class="fa-solid fa-file-excel text-sm"></i>
+                    <span class="hidden sm:inline">ส่งออก Excel (.xlsx)</span>
+                </button>
+
+                <button onclick="openSteelModal()" class="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-semibold rounded-xl transition flex items-center space-x-2">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <span class="hidden sm:inline">ตารางเหล็ก</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-full w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Project Summary Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group">
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">คอนกรีตโครงสร้างรวม</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span id="sum-concrete" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">0.00</span>
+                    <span class="text-xs text-slate-400">ลบ.ม.</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-1">คาน + เสาตอม่อ/เสา</p>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group">
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">พื้นที่ไม้แบบรวม</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span id="sum-formwork" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">0.00</span>
+                    <span class="text-xs text-slate-400">ตร.ม.</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-1">หักรอยต่อช่วงเสาแล้ว</p>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group">
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">เหล็กเสริมรวม (+เผื่อ)</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span id="sum-rebar" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">0.00</span>
+                    <span class="text-xs text-slate-400">กก.</span>
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">รวมระยะงอปลายมาตรฐานและเหล็กพิเศษแล้ว</p>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group">
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">ลวดผูกเหล็ก #18</div>
+                <div class="mt-2 flex items-baseline justify-between">
+                    <span id="sum-wire" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">0.00</span>
+                    <span class="text-xs text-slate-400">กก.</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mt-1">คิด 3% ของน้ำหนักเหล็กจริง</p>
+            </div>
+        </div>
+
+        <!-- Global Steel Setting Controls -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs">
+            <div class="flex items-center space-x-2 text-amber-400 font-bold">
+                <i class="fa-solid fa-sliders text-base"></i>
+                <span>กำหนดสัดส่วนระยะความยาวเหล็กเสริมพิเศษ (Fraction of Span Length):</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-4">
+                <div class="flex items-center space-x-2">
+                    <span class="text-slate-400">เหล็กพิเศษบน:</span>
+                    <select id="factor-extra-top" onchange="calculateAll()" class="bg-slate-950 border border-slate-700 text-amber-400 font-bold px-2 py-1 rounded outline-none">
+                        <option value="0.33">L/3 (0.33L)</option>
+                        <option value="0.25">L/4 (0.25L)</option>
+                        <option value="0.20">L/5 (0.20L)</option>
+                        <option value="1.00">L (1.00L)</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-slate-400">เหล็กพิเศษกลาง:</span>
+                    <select id="factor-extra-mid" onchange="calculateAll()" class="bg-slate-950 border border-slate-700 text-amber-400 font-bold px-2 py-1 rounded outline-none">
+                        <option value="1.00" selected>L (1.00L - Side Bar)</option>
+                        <option value="0.75">3L/4 (0.75L)</option>
+                        <option value="0.50">L/2 (0.50L)</option>
+                    </select>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-slate-400">เหล็กพิเศษล่าง:</span>
+                    <select id="factor-extra-bot" onchange="calculateAll()" class="bg-slate-950 border border-slate-700 text-amber-400 font-bold px-2 py-1 rounded outline-none">
+                        <option value="0.70" selected>0.70L (ช่วงกลางคาน)</option>
+                        <option value="0.75">L/4 ถึง L/4 (0.75L)</option>
+                        <option value="0.80">0.80L</option>
+                        <option value="1.00">L (1.00L)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Structural Line Explorer -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+                <div>
+                    <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired text-amber-500"></i>
+                        รายการโครงสร้างคานต่อช่วง & เสาประคอง (Structural Multi-Span Framework)
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">เพิ่มช่วงคานเพื่อปรับเพิ่มจำนวนเสารับจุดตัดโดยอัตโนมัติ พร้อมรองรับคานยื่น (Cantilever)</p>
+                </div>
+                <button onclick="addNewBeamLine()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-amber-500/20">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>เพิ่มสายคานใหม่ (New Beam Line)</span>
+                </button>
+            </div>
+
+            <!-- Beam Lines List Container -->
+            <div id="beam-lines-container" class="space-y-6">
+                <!-- Beam lines rendered dynamically via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Bottom Tools Section: Rebar Breakdown -->
+        <div class="grid grid-cols-1 gap-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between space-y-4">
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-bold text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-amber-500"></i>
+                            สรุปปริมาณเหล็กเสริมแยกตามขนาด (กก.)
+                        </h3>
+                        <span class="text-[11px] text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">รวมการเผื่อเศษ</span>
+                    </div>
+
+                    <div id="rebar-breakdown-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                        <!-- JS generated Cards -->
+                    </div>
+                </div>
+
+                <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1.5">
+                    <div class="font-semibold text-slate-200 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info text-amber-500"></i>
+                        มาตรฐานการดัดงอปลายอัตโนมัติ (Standard Hook Rules):
+                    </div>
+                    <ul class="list-disc list-inside text-[11px] space-y-1 text-slate-400">
+                        <li><b class="text-slate-200">เหล็กข้ออ้อย (DB12 - DB25):</b> ดัดงอฉาก $90^\circ$ Standard Hook คิดระยะดัดงอปลาย $12d_b$ โดยอัตโนมัติ</li>
+                        <li><b class="text-slate-200">เหล็กเส้นกลม/เหล็กปลอก (RB6 - RB9):</b> ดัดงอ $135^\circ$ ปลายปลอก คิดระยะงอ $6d_b$ โดยอัตโนมัติ</li>
+                        <li><b class="text-slate-200">คานยื่น (Cantilever):</b> จะไม่หักรอยต่อไม้แบบที่ปลายยื่น และคานยื่นจะคำนวณเหล็กบนฝังลึกเข้าเสาให้อัตโนมัติ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Steel Master Modal -->
+    <div id="steel-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4 relative">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-scale-balanced text-amber-500"></i>
+                    ตารางน้ำหนักเหล็กมาตรฐาน (มอก. 20-2559 / 24-2559)
+                </h3>
+                <button onclick="closeSteelModal()" class="text-slate-400 hover:text-slate-100">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="overflow-hidden rounded-xl border border-slate-800">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-slate-950 text-slate-400 font-semibold uppercase">
+                        <tr>
+                            <th class="p-2.5">ขนาดเหล็ก</th>
+                            <th class="p-2.5">ประเภท</th>
+                            <th class="p-2.5 text-right">น้ำหนัก (กก./ม.)</th>
+                            <th class="p-2.5 text-right">อัตราเผื่อเศษราคากลาง</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800 font-mono text-slate-200">
+                        <tr><td class="p-2.5 font-bold text-amber-400">RB6</td><td class="p-2.5 font-sans">เหล็กเส้นกลม</td><td class="p-2.5 text-right">0.222</td><td class="p-2.5 text-right text-amber-400">5%</td></tr>
+                        <tr><td class="p-2.5 font-bold text-amber-400">RB9</td><td class="p-2.5 font-sans">เหล็กเส้นกลม</td><td class="p-2.5 text-right">0.399</td><td class="p-2.5 text-right text-amber-400">5%</td></tr>
+                        <tr><td class="p-2.5 font-bold text-amber-400">DB12</td><td class="p-2.5 font-sans">เหล็กข้ออ้อย</td><td class="p-2.5 text-right">0.888</td><td class="p-2.5 text-right text-amber-400">7%</td></tr>
+                        <tr><td class="p-2.5 font-bold text-amber-400">DB16</td><td class="p-2.5 font-sans">เหล็กข้ออ้อย</td><td class="p-2.5 text-right">1.578</td><td class="p-2.5 text-right text-amber-400">7%</td></tr>
+                        <tr><td class="p-2.5 font-bold text-amber-400">DB20</td><td class="p-2.5 font-sans">เหล็กข้ออ้อย</td><td class="p-2.5 text-right">2.466</td><td class="p-2.5 text-right text-amber-400">9%</td></tr>
+                        <tr><td class="p-2.5 font-bold text-amber-400">DB25</td><td class="p-2.5 font-sans">เหล็กข้ออ้อย</td><td class="p-2.5 text-right">3.853</td><td class="p-2.5 text-right text-amber-400">9%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-[11px] text-slate-400">*อ้างอิงหลักเกณฑ์การคำนวณราคากลางงานก่อสร้างอาคาร กรมบัญชีกลาง กระทรวงการคลัง</p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-amber-500 text-slate-950 font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-xs">
+        <i class="fa-solid fa-check-circle text-base"></i>
+        <span id="toast-message">ดำเนินการสำเร็จ</span>
+    </div>
+
+    <script>
+        const STEEL_SPECS = {
+            'RB6': { weight: 0.222, waste: 0.05, dbNominal: 0.006, isStirrup: true },
+            'RB9': { weight: 0.399, waste: 0.05, dbNominal: 0.009, isStirrup: true },
+            'DB12': { weight: 0.888, waste: 0.07, dbNominal: 0.012, isStirrup: false },
+            'DB16': { weight: 1.578, waste: 0.07, dbNominal: 0.016, isStirrup: false },
+            'DB20': { weight: 2.466, waste: 0.09, dbNominal: 0.020, isStirrup: false },
+            'DB25': { weight: 3.853, waste: 0.09, dbNominal: 0.025, isStirrup: false }
+        };
+
+        let beamLines = [
+            {
+                id: 1,
+                lineCode: 'GB1-Line',
+                spans: [
+                    {
+                        spanId: 101,
+                        name: 'B1 (Span 1)',
+                        isCantilever: false,
+                        width: 0.20,
+                        depth: 0.40,
+                        length: 4.00,
+                        topQty: 2, topType: 'DB12',
+                        botQty: 2, botType: 'DB12',
+                        extraTopQty: 1, extraTopType: 'DB12',
+                        extraMidQty: 0, extraMidType: 'DB12',
+                        extraBotQty: 1, extraBotType: 'DB12',
+                        stirrupType: 'RB6', stirrupSpacing: 0.15
+                    },
+                    {
+                        spanId: 102,
+                        name: 'B1 (Span 2)',
+                        isCantilever: false,
+                        width: 0.20,
+                        depth: 0.40,
+                        length: 4.50,
+                        topQty: 2, topType: 'DB12',
+                        botQty: 2, botType: 'DB12',
+                        extraTopQty: 2, extraTopType: 'DB12',
+                        extraMidQty: 0, extraMidType: 'DB12',
+                        extraBotQty: 1, extraBotType: 'DB12',
+                        stirrupType: 'RB6', stirrupSpacing: 0.15
+                    }
+                ],
+                columns: [
+                    { colId: 201, name: 'C1-1', position: 'first', width: 0.25, depth: 0.25, height: 1.50, mainQty: 4, mainType: 'DB16', stirrupType: 'RB6', stirrupSpacing: 0.15 },
+                    { colId: 202, name: 'C1-2', position: 'middle', width: 0.25, depth: 0.25, height: 1.50, mainQty: 4, mainType: 'DB16', stirrupType: 'RB6', stirrupSpacing: 0.15 },
+                    { colId: 203, name: 'C1-3', position: 'last', width: 0.25, depth: 0.25, height: 1.50, mainQty: 4, mainType: 'DB16', stirrupType: 'RB6', stirrupSpacing: 0.15 }
+                ]
+            }
+        ];
+
+        window.onload = function() {
+            renderBeamLines();
+            calculateAll();
+        };
+
+        // Automatic Standard Hook Calculation based on ACI/EIT Code
+        function getAutoStandardHook(dbType) {
+            const spec = STEEL_SPECS[dbType];
+            if (!spec) return 0;
+            const db = spec.dbNominal;
+            // RB6/RB9 Stirrup standard hook 135 deg = 6*db
+            // DB12-DB25 Main rebar standard hook 90 deg = 12*db
+            return spec.isStirrup ? (6 * db) : (12 * db);
+        }
+
+        function syncColumnsWithSpans(line) {
+            const requiredColumnsCount = line.spans.length + 1;
+            
+            while (line.columns.length < requiredColumnsCount) {
+                const nextNum = line.columns.length + 1;
+                line.columns.push({
+                    colId: Date.now() + Math.random(),
+                    name: `C${line.id}-${nextNum}`,
+                    position: 'middle',
+                    width: 0.25, depth: 0.25, height: 1.50,
+                    mainQty: 4, mainType: 'DB16',
+                    stirrupType: 'RB6', stirrupSpacing: 0.15
+                });
+            }
+            
+            while (line.columns.length > requiredColumnsCount && line.columns.length > 1) {
+                line.columns.pop();
+            }
+
+            line.columns.forEach((col, idx) => {
+                if (idx === 0) col.position = 'first';
+                else if (idx === line.columns.length - 1) col.position = 'last';
+                else col.position = 'middle';
+            });
+        }
+
+        function renderBeamLines() {
+            const container = document.getElementById('beam-lines-container');
+            container.innerHTML = '';
+
+            beamLines.forEach((line, lineIndex) => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = "bg-slate-950/80 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4";
+
+                lineDiv.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+                        <div class="flex items-center space-x-3">
+                            <span class="bg-amber-500/10 text-amber-400 font-bold px-2.5 py-1 rounded-lg border border-amber-500/20 text-xs font-mono">
+                                สายที่ ${lineIndex + 1}
+                            </span>
+                            <input type="text" value="${line.lineCode}" onchange="updateLineCode(${line.id}, this.value)" class="bg-slate-900 border border-slate-700 text-slate-100 font-bold px-3 py-1.5 rounded-lg text-xs outline-none focus:border-amber-500 min-w-[120px]">
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="addSpanToLine(${line.id})" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg border border-slate-700 transition flex items-center space-x-1">
+                                <i class="fa-solid fa-plus text-amber-400"></i>
+                                <span>เพิ่มช่วงคาน (เพิ่มเสาอัตโนมัติ)</span>
+                            </button>
+                            <button onclick="deleteBeamLine(${line.id})" class="text-slate-500 hover:text-red-400 p-1.5">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Spans Table -->
+                    <div class="space-y-2">
+                        <div class="text-xs font-semibold text-amber-400 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-horizontal"></i> รายการช่วงคาน (Beam Spans)</span>
+                            <span class="text-[11px] text-slate-400 font-normal">*ติ๊กช่อง "คานยื่น" เมื่อเป็นคาน Cantilever</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse min-w-[1200px]">
+                                <thead class="bg-slate-900 text-slate-400 text-[11px] uppercase border-b border-slate-800">
+                                    <tr>
+                                        <th class="p-2 min-w-[70px]">คานยื่น</th>
+                                        <th class="p-2 font-mono min-w-[110px]">ชื่อช่วง</th>
+                                        <th class="p-2 min-w-[130px]">ขนาด กxล (ม.)</th>
+                                        <th class="p-2 min-w-[90px]">ยาว L (ม.)</th>
+                                        <th class="p-2 min-w-[130px]">เหล็กบน</th>
+                                        <th class="p-2 min-w-[130px]">เหล็กล่าง</th>
+                                        <th class="p-2 min-w-[130px]">พิเศษบน</th>
+                                        <th class="p-2 min-w-[130px]">พิเศษกลาง</th>
+                                        <th class="p-2 min-w-[130px]">พิเศษล่าง</th>
+                                        <th class="p-2 min-w-[150px]">เหล็กปลอก</th>
+                                        <th class="p-2 text-right min-w-[90px]">คอนกรีต (ม³)</th>
+                                        <th class="p-2 text-right min-w-[90px]">ไม้แบบ (ม²)</th>
+                                        <th class="p-2 text-right min-w-[100px]">เหล็กเสริม (กก.)</th>
+                                        <th class="p-2 text-center min-w-[50px]">ลบ</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/50">
+                                    ${line.spans.map(span => getSpanRowHTML(line.id, span)).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Columns Table -->
+                    <div class="space-y-2 pt-2 border-t border-slate-800/50">
+                        <div class="text-xs font-semibold text-sky-400 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-building-user"></i> รายการเสารับจุดตัด (Column Supports - Auto Synced)</span>
+                            <span class="text-[11px] text-slate-400 font-normal">จำนวนเสาถูกซิงค์อัตโนมัติ (${line.columns.length} ต้น)</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse min-w-[900px]">
+                                <thead class="bg-slate-900 text-slate-400 text-[11px] uppercase border-b border-slate-800">
+                                    <tr>
+                                        <th class="p-2 font-mono min-w-[120px]">ชื่อเสา</th>
+                                        <th class="p-2 min-w-[120px]">ตำแหน่งเสา</th>
+                                        <th class="p-2 min-w-[130px]">ขนาด กxล (ม.)</th>
+                                        <th class="p-2 min-w-[90px]">ความสูง H (ม.)</th>
+                                        <th class="p-2 min-w-[140px]">เหล็กแกน (Main Rebar)</th>
+                                        <th class="p-2 min-w-[150px]">เหล็กปลอกเสา</th>
+                                        <th class="p-2 text-right min-w-[90px]">คอนกรีต (ม³)</th>
+                                        <th class="p-2 text-right min-w-[90px]">ไม้แบบ (ม²)</th>
+                                        <th class="p-2 text-right min-w-[100px]">เหล็กเสริม (กก.)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800/50">
+                                    ${line.columns.map(col => getColumnRowHTML(line.id, col)).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(lineDiv);
+            });
+        }
+
+        function getSpanRowHTML(lineId, span) {
+            return `
+                <tr class="hover:bg-slate-900/40 transition">
+                    <td class="p-2 text-center">
+                        <input type="checkbox" ${span.isCantilever ? 'checked' : ''} onchange="updateSpan(${lineId}, ${span.spanId}, 'isCantilever', this.checked)" class="w-4 h-4 accent-amber-500 rounded cursor-pointer" title="คานยื่น (Cantilever)">
+                    </td>
+                    <td class="p-2">
+                        <input type="text" value="${span.name}" onchange="updateSpan(${lineId}, ${span.spanId}, 'name', this.value)" class="w-full min-w-[90px] bg-slate-900 border border-slate-700 text-amber-400 font-bold px-2 py-1.5 rounded text-xs">
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" step="0.01" value="${span.width}" onchange="updateSpan(${lineId}, ${span.spanId}, 'width', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
+                            <span class="text-slate-500">x</span>
+                            <input type="number" step="0.01" value="${span.depth}" onchange="updateSpan(${lineId}, ${span.spanId}, 'depth', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
+                        </div>
+                    </td>
+                    <td class="p-2">
+                        <input type="number" step="0.01" value="${span.length}" onchange="updateSpan(${lineId}, ${span.spanId}, 'length', parseFloat(this.value))" class="w-16 bg-slate-900 border border-slate-700 font-bold text-amber-300 px-2 py-1.5 rounded text-xs font-mono">
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" value="${span.topQty}" onchange="updateSpan(${lineId}, ${span.spanId}, 'topQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            ${getSteelSelectHTML('span', lineId, span.spanId, 'topType', span.topType)}
+                        </div>
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" value="${span.botQty}" onchange="updateSpan(${lineId}, ${span.spanId}, 'botQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            ${getSteelSelectHTML('span', lineId, span.spanId, 'botType', span.botType)}
+                        </div>
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" value="${span.extraTopQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraTopQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            ${getSteelSelectHTML('span', lineId, span.spanId, 'extraTopType', span.extraTopType || 'DB12')}
+                        </div>
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" value="${span.extraMidQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraMidQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            ${getSteelSelectHTML('span', lineId, span.spanId, 'extraMidType', span.extraMidType || 'DB12')}
+                        </div>
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" value="${span.extraBotQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraBotQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            ${getSteelSelectHTML('span', lineId, span.spanId, 'extraBotType', span.extraBotType || 'DB12')}
+                        </div>
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            ${getSteelSelectHTML('span', lineId, span.spanId, 'stirrupType', span.stirrupType, true)}
+                            <span class="text-slate-500">@</span>
+                            <input type="number" step="0.01" value="${span.stirrupSpacing}" onchange="updateSpan(${lineId}, ${span.spanId}, 'stirrupSpacing', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                        </div>
+                    </td>
+                    <td class="p-2 text-right font-mono font-semibold text-slate-200" id="span-conc-${span.spanId}">0.00</td>
+                    <td class="p-2 text-right font-mono font-semibold text-slate-200" id="span-form-${span.spanId}">0.00</td>
+                    <td class="p-2 text-right font-mono font-bold text-amber-400" id="span-rebar-${span.spanId}">0.00</td>
+                    <td class="p-2 text-center">
+                        <button onclick="deleteSpan(${lineId}, ${span.spanId})" class="text-slate-500 hover:text-red-400">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function getColumnRowHTML(lineId, col) {
+            const posOptions = [
+                { val: 'first', label: 'ต้นแรก' },
+                { val: 'middle', label: 'ต้นกลาง' },
+                { val: 'last', label: 'ต้นสุดท้าย' }
+            ];
+            
+            let posSelectHTML = `<select onchange="updateColumn(${lineId}, ${col.colId}, 'position', this.value)" class="w-full bg-slate-900 border border-slate-700 text-sky-400 font-bold px-2 py-1.5 rounded text-xs outline-none">`;
+            posOptions.forEach(opt => {
+                posSelectHTML += `<option value="${opt.val}" ${col.position === opt.val ? 'selected' : ''}>${opt.label}</option>`;
+            });
+            posSelectHTML += `</select>`;
+
+            return `
+                <tr class="hover:bg-slate-900/40 transition">
+                    <td class="p-2">
+                        <input type="text" value="${col.name}" onchange="updateColumn(${lineId}, ${col.colId}, 'name', this.value)" class="w-full min-w-[90px] bg-slate-900 border border-slate-700 text-sky-400 font-bold px-2 py-1.5 rounded text-xs">
+                    </td>
+                    <td class="p-2">
+                        ${posSelectHTML}
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" step="0.01" value="${col.width}" onchange="updateColumn(${lineId}, ${col.colId}, 'width', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
+                            <span class="text-slate-500">x</span>
+                            <input type="number" step="0.01" value="${col.depth}" onchange="updateColumn(${lineId}, ${col.colId}, 'depth', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
+                        </div>
+                    </td>
+                    <td class="p-2">
+                        <input type="number" step="0.01" value="${col.height}" onchange="updateColumn(${lineId}, ${col.colId}, 'height', parseFloat(this.value))" class="w-16 bg-slate-900 border border-slate-700 font-bold text-sky-300 px-2 py-1.5 rounded text-xs font-mono">
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            <input type="number" value="${col.mainQty}" onchange="updateColumn(${lineId}, ${col.colId}, 'mainQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            ${getSteelSelectHTML('col', lineId, col.colId, 'mainType', col.mainType)}
+                        </div>
+                    </td>
+                    <td class="p-2">
+                        <div class="flex items-center space-x-1">
+                            ${getSteelSelectHTML('col', lineId, col.colId, 'stirrupType', col.stirrupType, true)}
+                            <span class="text-slate-500">@</span>
+                            <input type="number" step="0.01" value="${col.stirrupSpacing}" onchange="updateColumn(${lineId}, ${col.colId}, 'stirrupSpacing', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                        </div>
+                    </td>
+                    <td class="p-2 text-right font-mono font-semibold text-slate-200" id="col-conc-${col.colId}">0.00</td>
+                    <td class="p-2 text-right font-mono font-semibold text-slate-200" id="col-form-${col.colId}">0.00</td>
+                    <td class="p-2 text-right font-mono font-bold text-amber-400" id="col-rebar-${col.colId}">0.00</td>
+                </tr>
+            `;
+        }
+
+        function getSteelSelectHTML(type, lineId, elemId, field, currentValue, isStirrup = false) {
+            const options = isStirrup ? ['RB6', 'RB9'] : ['DB12', 'DB16', 'DB20', 'DB25'];
+            const handler = type === 'span' ? `updateSpan(${lineId}, ${elemId}, '${field}', this.value)` : `updateColumn(${lineId}, ${elemId}, '${field}', this.value)`;
+            let html = `<select onchange="${handler}" class="bg-slate-900 border border-slate-700 text-slate-200 px-2 py-1.5 rounded text-xs outline-none min-w-[65px]">`;
+            options.forEach(opt => {
+                html += `<option value="${opt}" ${opt === currentValue ? 'selected' : ''}>${opt}</option>`;
+            });
+            html += `</select>`;
+            return html;
+        }
+
+        function addNewBeamLine() {
+            const newId = beamLines.length > 0 ? Math.max(...beamLines.map(l => l.id)) + 1 : 1;
+            const newLine = {
+                id: newId,
+                lineCode: `Line-${newId}`,
+                spans: [
+                    {
+                        spanId: newId * 100 + 1,
+                        name: `B${newId} (Span 1)`,
+                        isCantilever: false,
+                        width: 0.20, depth: 0.40, length: 4.00,
+                        topQty: 2, topType: 'DB12',
+                        botQty: 2, botType: 'DB12',
+                        extraTopQty: 1, extraTopType: 'DB12',
+                        extraMidQty: 0, extraMidType: 'DB12',
+                        extraBotQty: 1, extraBotType: 'DB12',
+                        stirrupType: 'RB6', stirrupSpacing: 0.15
+                    }
+                ],
+                columns: []
+            };
+            syncColumnsWithSpans(newLine);
+            beamLines.push(newLine);
+            renderBeamLines();
+            calculateAll();
+        }
+
+        function addSpanToLine(lineId) {
+            const line = beamLines.find(l => l.id === lineId);
+            if (line) {
+                const nextNum = line.spans.length + 1;
+                line.spans.push({
+                    spanId: Date.now() + Math.random(),
+                    name: `Span ${nextNum}`,
+                    isCantilever: false,
+                    width: 0.20, depth: 0.40, length: 4.00,
+                    topQty: 2, topType: 'DB12',
+                    botQty: 2, botType: 'DB12',
+                    extraTopQty: 0, extraTopType: 'DB12',
+                    extraMidQty: 0, extraMidType: 'DB12',
+                    extraBotQty: 0, extraBotType: 'DB12',
+                    stirrupType: 'RB6', stirrupSpacing: 0.15
+                });
+                syncColumnsWithSpans(line);
+                renderBeamLines();
+                calculateAll();
+            }
+        }
+
+        function updateLineCode(lineId, val) {
+            const line = beamLines.find(l => l.id === lineId);
+            if (line) line.lineCode = val;
+        }
+
+        function updateSpan(lineId, spanId, key, value) {
+            const line = beamLines.find(l => l.id === lineId);
+            if (line) {
+                const span = line.spans.find(s => s.spanId === spanId);
+                if (span) {
+                    span[key] = value;
+                    calculateAll();
+                }
+            }
+        }
+
+        function updateColumn(lineId, colId, key, value) {
+            const line = beamLines.find(l => l.id === lineId);
+            if (line) {
+                const col = line.columns.find(c => c.colId === colId);
+                if (col) {
+                    col[key] = value;
+                    calculateAll();
+                }
+            }
+        }
+
+        function deleteSpan(lineId, spanId) {
+            const line = beamLines.find(l => l.id === lineId);
+            if (line) {
+                if (line.spans.length <= 1) {
+                    alert('ต้องมีอย่างน้อย 1 ช่วงคานในสายงาน');
+                    return;
+                }
+                line.spans = line.spans.filter(s => s.spanId !== spanId);
+                syncColumnsWithSpans(line);
+                renderBeamLines();
+                calculateAll();
+            }
+        }
+
+        function deleteBeamLine(lineId) {
+            beamLines = beamLines.filter(l => l.id !== lineId);
+            renderBeamLines();
+            calculateAll();
+        }
+
+        function calculateAll() {
+            let totalConcrete = 0;
+            let totalFormwork = 0;
+            let totalNetSteelWeight = 0;
+            let totalRebarWeightWithWaste = 0;
+
+            const factorTop = parseFloat(document.getElementById('factor-extra-top')?.value || 0.33);
+            const factorMid = parseFloat(document.getElementById('factor-extra-mid')?.value || 1.00);
+            const factorBot = parseFloat(document.getElementById('factor-extra-bot')?.value || 0.70);
+
+            const rebarBySize = {
+                'RB6': 0, 'RB9': 0, 'DB12': 0, 'DB16': 0, 'DB20': 0, 'DB25': 0
+            };
+
+            beamLines.forEach(line => {
+                let avgBeamWidth = 0.20;
+                let avgBeamDepth = 0.40;
+                if (line.spans.length > 0) {
+                    avgBeamWidth = line.spans.reduce((sum, s) => sum + s.width, 0) / line.spans.length;
+                    avgBeamDepth = line.spans.reduce((sum, s) => sum + s.depth, 0) / line.spans.length;
+                }
+
+                line.spans.forEach(span => {
+                    const conc = span.width * span.depth * span.length;
+                    totalConcrete += conc;
+
+                    // Formwork Calculation: Cantilever uses full 3 sides (doesn't deduct end column)
+                    const form = ((2 * span.depth) + span.width) * span.length;
+                    totalFormwork += form;
+
+                    // Standard Auto Hooks
+                    const topHook = getAutoStandardHook(span.topType) * (span.isCantilever ? 2.5 : 2); // Extra anchorage for cantilever top steel
+                    const botHook = getAutoStandardHook(span.botType) * 2;
+
+                    const topNet = span.topQty * (span.length + topHook) * STEEL_SPECS[span.topType].weight;
+                    const botNet = span.botQty * (span.length + botHook) * STEEL_SPECS[span.botType].weight;
+                    
+                    const extraTopNet = (span.extraTopQty || 0) * (span.length * factorTop) * STEEL_SPECS[span.extraTopType || 'DB12'].weight;
+                    const extraMidNet = (span.extraMidQty || 0) * (span.length * factorMid) * STEEL_SPECS[span.extraMidType || 'DB12'].weight;
+                    const extraBotNet = (span.extraBotQty || 0) * (span.length * factorBot) * STEEL_SPECS[span.extraBotType || 'DB12'].weight;
+
+                    rebarBySize[span.topType] += topNet;
+                    rebarBySize[span.botType] += botNet;
+                    if(span.extraTopQty) rebarBySize[span.extraTopType] += extraTopNet;
+                    if(span.extraMidQty) rebarBySize[span.extraMidType] += extraMidNet;
+                    if(span.extraBotQty) rebarBySize[span.extraBotType] += extraBotNet;
+
+                    const stirrupPerim = (2 * (span.width - 0.07)) + (2 * (span.depth - 0.07)) + getAutoStandardHook(span.stirrupType);
+                    const stirrupCount = span.stirrupSpacing > 0 ? (span.length / span.stirrupSpacing) : 0;
+                    const stirrupNet = stirrupCount * stirrupPerim * STEEL_SPECS[span.stirrupType].weight;
+
+                    rebarBySize[span.stirrupType] += stirrupNet;
+
+                    const totalSpanRebarWaste = 
+                        (topNet * (1 + STEEL_SPECS[span.topType].waste)) +
+                        (botNet * (1 + STEEL_SPECS[span.botType].waste)) +
+                        (extraTopNet * (1 + STEEL_SPECS[span.extraTopType || 'DB12'].waste)) +
+                        (extraMidNet * (1 + STEEL_SPECS[span.extraMidType || 'DB12'].waste)) +
+                        (extraBotNet * (1 + STEEL_SPECS[span.extraBotType || 'DB12'].waste)) +
+                        (stirrupNet * (1 + STEEL_SPECS[span.stirrupType].waste));
+
+                    const concEl = document.getElementById(`span-conc-${span.spanId}`);
+                    const formEl = document.getElementById(`span-form-${span.spanId}`);
+                    const rebarEl = document.getElementById(`span-rebar-${span.spanId}`);
+
+                    if(concEl) concEl.innerText = conc.toFixed(2);
+                    if(formEl) formEl.innerText = form.toFixed(2);
+                    if(rebarEl) rebarEl.innerText = totalSpanRebarWaste.toFixed(2);
+                });
+
+                line.columns.forEach(col => {
+                    const conc = col.width * col.depth * col.height;
+                    totalConcrete += conc;
+
+                    const fullColumnFormwork = 2 * (col.width + col.depth) * col.height;
+                    let beamJointDeduction = 0;
+
+                    if (col.position === 'first' || col.position === 'last') {
+                        beamJointDeduction = avgBeamWidth * avgBeamDepth;
+                    } else if (col.position === 'middle') {
+                        beamJointDeduction = 2 * (avgBeamWidth * avgBeamDepth);
+                    }
+
+                    const form = Math.max(0, fullColumnFormwork - beamJointDeduction);
+                    totalFormwork += form;
+
+                    const colHook = getAutoStandardHook(col.mainType);
+                    const effColHeight = col.height + colHook;
+                    const mainNet = col.mainQty * effColHeight * STEEL_SPECS[col.mainType].weight;
+                    rebarBySize[col.mainType] += mainNet;
+
+                    const colStirrupPerim = (2 * (col.width - 0.10)) + (2 * (col.depth - 0.10)) + getAutoStandardHook(col.stirrupType);
+                    const colStirrupCount = col.stirrupSpacing > 0 ? (col.height / col.stirrupSpacing) : 0;
+                    const colStirrupNet = colStirrupCount * colStirrupPerim * STEEL_SPECS[col.stirrupType].weight;
+                    rebarBySize[col.stirrupType] += colStirrupNet;
+
+                    const totalColRebarWaste = 
+                        (mainNet * (1 + STEEL_SPECS[col.mainType].waste)) +
+                        (colStirrupNet * (1 + STEEL_SPECS[col.stirrupType].waste));
+
+                    const concEl = document.getElementById(`col-conc-${col.colId}`);
+                    const formEl = document.getElementById(`col-form-${col.colId}`);
+                    const rebarEl = document.getElementById(`col-rebar-${col.colId}`);
+
+                    if(concEl) concEl.innerText = conc.toFixed(2);
+                    if(formEl) formEl.innerText = form.toFixed(2);
+                    if(rebarEl) rebarEl.innerText = totalColRebarWaste.toFixed(2);
+                });
+            });
+
+            for (const type in rebarBySize) {
+                totalNetSteelWeight += rebarBySize[type];
+                totalRebarWeightWithWaste += rebarBySize[type] * (1 + STEEL_SPECS[type].waste);
+            }
+
+            const totalWire = totalNetSteelWeight * 0.03;
+
+            document.getElementById('sum-concrete').innerText = totalConcrete.toFixed(2);
+            document.getElementById('sum-formwork').innerText = totalFormwork.toFixed(2);
+            document.getElementById('sum-rebar').innerText = totalRebarWeightWithWaste.toFixed(2);
+            document.getElementById('sum-wire').innerText = totalWire.toFixed(2);
+
+            renderRebarBreakdown(rebarBySize);
+        }
+
+        function renderRebarBreakdown(rebarBySize) {
+            const grid = document.getElementById('rebar-breakdown-grid');
+            grid.innerHTML = '';
+
+            for (const [type, netWeight] of Object.entries(rebarBySize)) {
+                const wasteRate = STEEL_SPECS[type].waste;
+                const totalWeight = netWeight * (1 + wasteRate);
+
+                const card = document.createElement('div');
+                card.className = "bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-amber-400 text-xs font-mono">${type}</span>
+                        <span class="text-[10px] text-slate-500 bg-slate-900 px-1.5 py-0.5 rounded">+${(wasteRate*100)}%</span>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span class="text-base font-bold text-slate-100 font-mono">${totalWeight.toFixed(2)}</span>
+                        <span class="text-[10px] text-slate-400">กก.</span>
+                    </div>
+                    <div class="text-[10px] text-slate-500 mt-0.5">สุทธิ: ${netWeight.toFixed(2)} กก.</div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert('ไม่สามารถโหลดไลบรารี SheetJS ได้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต');
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            const detailedRows = [
+                ["สายงาน", "องค์อาคาร", "ตำแหน่ง/ประเภท", "กว้าง (ม.)", "ลึก/สูง (ม.)", "ยาว (ม.)", "คอนกรีต (ลบ.ม.)", "ไม้แบบ (ตร.ม.)", "เหล็กเสริมรวมเผื่อ (กก.)", "ลวดผูกเหล็ก 3% (กก.)"]
+            ];
+
+            let grandConc = 0, grandForm = 0, grandRebar = 0, grandWire = 0;
+            const factorTop = parseFloat(document.getElementById('factor-extra-top')?.value || 0.33);
+            const factorMid = parseFloat(document.getElementById('factor-extra-mid')?.value || 1.00);
+            const factorBot = parseFloat(document.getElementById('factor-extra-bot')?.value || 0.70);
+
+            const posTextMap = { 'first': 'ต้นแรก', 'middle': 'ต้นกลาง', 'last': 'ต้นสุดท้าย' };
+
+            beamLines.forEach(line => {
+                let avgBeamWidth = 0.20;
+                let avgBeamDepth = 0.40;
+                if (line.spans.length > 0) {
+                    avgBeamWidth = line.spans.reduce((sum, s) => sum + s.width, 0) / line.spans.length;
+                    avgBeamDepth = line.spans.reduce((sum, s) => sum + s.depth, 0) / line.spans.length;
+                }
+
+                line.spans.forEach(s => {
+                    const conc = parseFloat((s.width * s.depth * s.length).toFixed(2));
+                    const form = parseFloat((((2 * s.depth) + s.width) * s.length).toFixed(2));
+                    
+                    const topHook = getAutoStandardHook(s.topType) * (s.isCantilever ? 2.5 : 2);
+                    const botHook = getAutoStandardHook(s.botType) * 2;
+
+                    const topN = s.topQty * (s.length + topHook) * STEEL_SPECS[s.topType].weight * (1 + STEEL_SPECS[s.topType].waste);
+                    const botN = s.botQty * (s.length + botHook) * STEEL_SPECS[s.botType].weight * (1 + STEEL_SPECS[s.botType].waste);
+                    const extraTopN = (s.extraTopQty || 0) * (s.length * factorTop) * STEEL_SPECS[s.extraTopType || 'DB12'].weight * (1 + STEEL_SPECS[s.extraTopType || 'DB12'].waste);
+                    const extraMidN = (s.extraMidQty || 0) * (s.length * factorMid) * STEEL_SPECS[s.extraMidType || 'DB12'].weight * (1 + STEEL_SPECS[s.extraMidType || 'DB12'].waste);
+                    const extraBotN = (s.extraBotQty || 0) * (s.length * factorBot) * STEEL_SPECS[s.extraBotType || 'DB12'].weight * (1 + STEEL_SPECS[s.extraBotType || 'DB12'].waste);
+                    
+                    const stP = (2 * (s.width - 0.07)) + (2 * (s.depth - 0.07)) + getAutoStandardHook(s.stirrupType);
+                    const stN = (s.length / s.stirrupSpacing) * stP * STEEL_SPECS[s.stirrupType].weight * (1 + STEEL_SPECS[s.stirrupType].waste);
+                    
+                    const rebarNet = (s.topQty * (s.length + topHook) * STEEL_SPECS[s.topType].weight) +
+                                     (s.botQty * (s.length + botHook) * STEEL_SPECS[s.botType].weight) +
+                                     ((s.extraTopQty || 0) * (s.length * factorTop) * STEEL_SPECS[s.extraTopType || 'DB12'].weight) +
+                                     ((s.extraMidQty || 0) * (s.length * factorMid) * STEEL_SPECS[s.extraMidType || 'DB12'].weight) +
+                                     ((s.extraBotQty || 0) * (s.length * factorBot) * STEEL_SPECS[s.extraBotType || 'DB12'].weight) +
+                                     ((s.length / s.stirrupSpacing) * stP * STEEL_SPECS[s.stirrupType].weight);
+
+                    const rebar = parseFloat((topN + botN + extraTopN + extraMidN + extraBotN + stN).toFixed(2));
+                    const wire = parseFloat((rebarNet * 0.03).toFixed(2));
+
+                    grandConc += conc; grandForm += form; grandRebar += rebar; grandWire += wire;
+                    detailedRows.push([line.lineCode, s.name, s.isCantilever ? "คานยื่น" : "ช่วงคาน", s.width, s.depth, s.length, conc, form, rebar, wire]);
+                });
+
+                line.columns.forEach(c => {
+                    const conc = parseFloat((c.width * c.depth * c.height).toFixed(2));
+                    const fullColumnFormwork = 2 * (c.width + c.depth) * c.height;
+                    let beamJointDeduction = (c.position === 'middle') ? (2 * avgBeamWidth * avgBeamDepth) : (avgBeamWidth * avgBeamDepth);
+                    const form = parseFloat((Math.max(0, fullColumnFormwork - beamJointDeduction)).toFixed(2));
+                    
+                    const colHook = getAutoStandardHook(c.mainType);
+                    const effColHeight = c.height + colHook;
+
+                    const mainN = c.mainQty * effColHeight * STEEL_SPECS[c.mainType].weight * (1 + STEEL_SPECS[c.mainType].waste);
+                    const stP = (2 * (c.width - 0.10)) + (2 * (c.depth - 0.10)) + getAutoStandardHook(c.stirrupType);
+                    const stN = (c.height / c.stirrupSpacing) * stP * STEEL_SPECS[c.stirrupType].weight * (1 + STEEL_SPECS[c.stirrupType].waste);
+                    
+                    const rebarNet = (c.mainQty * effColHeight * STEEL_SPECS[c.mainType].weight) +
+                                     ((c.height / c.stirrupSpacing) * stP * STEEL_SPECS[c.stirrupType].weight);
+
+                    const rebar = parseFloat((mainN + stN).toFixed(2));
+                    const wire = parseFloat((rebarNet * 0.03).toFixed(2));
+
+                    grandConc += conc; grandForm += form; grandRebar += rebar; grandWire += wire;
+                    detailedRows.push([line.lineCode, c.name, `เสา (${posTextMap[c.position] || 'เสา'})`, c.width, c.depth, c.height, conc, form, rebar, wire]);
+                });
+            });
+
+            detailedRows.push([]);
+            detailedRows.push(["รวมทั้งโครงการ", "", "", "", "", "", grandConc.toFixed(2), grandForm.toFixed(2), grandRebar.toFixed(2), grandWire.toFixed(2)]);
+
+            const wsDetailed = XLSX.utils.aoa_to_sheet(detailedRows);
+            XLSX.utils.book_append_sheet(wb, wsDetailed, "ตารางรายการคำนวณ BOQ");
+
+            const fileName = `Structural_Takeoff_BOQ_${new Date().toISOString().slice(0,10)}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showToast('ส่งออกไฟล์ Excel (.xlsx) สำเร็จ!');
+        }
+
+        function exportToJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(beamLines, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `structural_data_${new Date().toISOString().slice(0,10)}.json`);
+            dlAnchorElem.click();
+            dlAnchorElem.remove();
+            showToast('บันทึกข้อมูลโครงสร้างเป็นไฟล์ JSON เรียบร้อย!');
+        }
+
+        function triggerJSONImport() {
+            document.getElementById('json-file-input').click();
+        }
+
+        function importFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (Array.isArray(data)) {
+                        beamLines = data;
+                        renderBeamLines();
+                        calculateAll();
+                        showToast('นำเข้าข้อมูล JSON สำเร็จ!');
+                    } else {
+                        alert('รูปแบบไฟล์ JSON ไม่ถูกต้อง');
+                    }
+                } catch (err) {
+                    alert('เกิดข้อผิดพลาดในการอ่านไฟล์ JSON');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function openSteelModal() {
+            document.getElementById('steel-modal').classList.remove('hidden');
+        }
+        function closeSteelModal() {
+            document.getElementById('steel-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
