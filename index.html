@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Structural BOQ Takeoff System - คานหลายช่วงและเสา</title>
+    <title>Structural BOQ Takeoff System - คาน ดิน/ชั้น/หลังคา เสา ค้ำยัน และไม้คร่าว</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -80,8 +80,8 @@
                     <i class="fa-solid fa-diagram-project"></i>
                 </div>
                 <div>
-                    <h1 class="text-base sm:text-lg font-bold text-slate-100 leading-tight">STRUCTURAL BOQ TAKEOFF</h1>
-                    <p class="text-[11px] text-amber-400">คานหลายช่วง, คานยื่น & เสา (กำหนดสัดส่วน L/x + ดัดงอตอม่อมาตรฐานอัตโนมัติ)</p>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-100 leading-tight">STRUCTURAL BOQ TAKEOFF SYSTEM</h1>
+                    <p class="text-[11px] text-amber-400">คานคอดิน (GB) / คานชั้น (B) / คานหลังคา (RB) / ไม้ค้ำยัน & ไม้คร่าวตามมาตรฐานราคากลาง</p>
                 </div>
             </div>
             
@@ -122,50 +122,145 @@
     <!-- Main Container -->
     <main class="flex-1 max-w-full w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        <!-- Project Summary Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group">
-                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">คอนกรีตโครงสร้างรวม</div>
-                <div class="mt-2 flex items-baseline justify-between">
-                    <span id="sum-concrete" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">0.00</span>
-                    <span class="text-xs text-slate-400">ลบ.ม.</span>
+        <!-- Enhanced Project Summary Dashboard -->
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 sm:gap-4">
+            
+            <!-- Concrete Card -->
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 relative overflow-hidden group border-amber-500/20 flex flex-col justify-between">
+                <div>
+                    <div class="text-slate-400 text-[11px] font-medium uppercase tracking-wider flex items-center justify-between">
+                        <span>คอนกรีตรวม</span>
+                        <i class="fa-solid fa-cubes text-amber-500"></i>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span id="sum-concrete" class="text-xl sm:text-2xl font-black text-amber-400 font-mono">0.00</span>
+                        <span class="text-[11px] text-slate-400">ลบ.ม.</span>
+                    </div>
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">คาน + เสาตอม่อ/เสา</p>
+                <div class="text-[10px] text-slate-400 mt-2 pt-2 border-t border-slate-800/80 space-y-0.5 font-mono">
+                    <div class="flex justify-between"><span>คานคอดิน:</span> <span id="sum-gb-concrete" class="text-slate-200 font-bold">0.00</span></div>
+                    <div class="flex justify-between"><span>คานชั้น/หลังคา:</span> <span id="sum-elevated-concrete" class="text-purple-400 font-bold">0.00</span></div>
+                    <div class="flex justify-between"><span>เสาโครงสร้าง:</span> <span id="sum-col-concrete" class="text-sky-400 font-bold">0.00</span></div>
+                </div>
             </div>
 
-            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group">
-                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">พื้นที่ไม้แบบรวม</div>
-                <div class="mt-2 flex items-baseline justify-between">
-                    <span id="sum-formwork" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">0.00</span>
-                    <span class="text-xs text-slate-400">ตร.ม.</span>
+            <!-- Formwork Card -->
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 relative overflow-hidden group border-slate-700/50 flex flex-col justify-between">
+                <div>
+                    <div class="text-slate-400 text-[11px] font-medium uppercase tracking-wider flex items-center justify-between">
+                        <span>ไม้แบบหล่อคอนกรีต</span>
+                        <i class="fa-solid fa-vector-square text-emerald-400"></i>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span id="sum-formwork" class="text-xl sm:text-2xl font-black text-emerald-400 font-mono">0.00</span>
+                        <span class="text-[11px] text-slate-400">ตร.ม.</span>
+                    </div>
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">หักรอยต่อช่วงเสาแล้ว</p>
+                <div class="text-[10px] text-slate-400 mt-2 pt-2 border-t border-slate-800/80 space-y-0.5 font-mono">
+                    <div class="flex justify-between"><span>ไม้แบบคาน:</span> <span id="sum-beam-formwork" class="text-slate-200 font-bold">0.00</span></div>
+                    <div class="flex justify-between"><span>ไม้แบบเสา:</span> <span id="sum-col-formwork" class="text-slate-200 font-bold">0.00</span></div>
+                    <div class="text-[9px] text-slate-500 italic mt-0.5">*หักจุดตัดรอยต่อคาน-เสาแล้ว</div>
+                </div>
             </div>
 
-            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group">
-                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">เหล็กเสริมรวม (+เผื่อ)</div>
-                <div class="mt-2 flex items-baseline justify-between">
-                    <span id="sum-rebar" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">0.00</span>
-                    <span class="text-xs text-slate-400">กก.</span>
+            <!-- Shoring Posts Card -->
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 relative overflow-hidden group border-orange-500/30 flex flex-col justify-between">
+                <div>
+                    <div class="text-slate-400 text-[11px] font-medium uppercase tracking-wider flex items-center justify-between">
+                        <span>ไม้ค้ำยันโครงสร้าง</span>
+                        <i class="fa-solid fa-tree text-orange-400"></i>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span id="sum-shoring" class="text-xl sm:text-2xl font-black text-orange-400 font-mono">0</span>
+                        <span class="text-[11px] text-slate-400">ต้น</span>
+                    </div>
                 </div>
-                <p class="text-[10px] text-slate-400 mt-1">รวมระยะงอปลายมาตรฐานและเหล็กพิเศษแล้ว</p>
+                <div class="text-[10px] text-slate-400 mt-2 pt-2 border-t border-slate-800/80 space-y-0.5 font-mono">
+                    <div class="flex justify-between"><span>ค้ำยันคานชั้น/หลังคา:</span> <span id="sum-beam-shoring" class="text-orange-300 font-bold">0</span></div>
+                    <div class="flex justify-between"><span>ค้ำยันยึดเสา (สูง>2.5m):</span> <span id="sum-col-shoring" class="text-orange-300 font-bold">0</span></div>
+                    <div class="text-[9px] text-slate-500 italic mt-0.5">*อ้างอิง 1 ต้น/ระยะคาน 0.6-0.8m</div>
+                </div>
             </div>
 
-            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden group">
-                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">ลวดผูกเหล็ก #18</div>
-                <div class="mt-2 flex items-baseline justify-between">
-                    <span id="sum-wire" class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">0.00</span>
-                    <span class="text-xs text-slate-400">กก.</span>
+            <!-- Timber Battens Card -->
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 relative overflow-hidden group border-amber-600/30 flex flex-col justify-between">
+                <div>
+                    <div class="text-slate-400 text-[11px] font-medium uppercase tracking-wider flex items-center justify-between">
+                        <span>ไม้คร่าวรองรับไม้แบบ</span>
+                        <i class="fa-solid fa-ruler-combined text-amber-500"></i>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span id="sum-battens" class="text-xl sm:text-2xl font-black text-amber-300 font-mono">0.00</span>
+                        <span class="text-[11px] text-slate-400">ลบ.ฟุต</span>
+                    </div>
                 </div>
-                <p class="text-[10px] text-slate-500 mt-1">คิด 3% ของน้ำหนักเหล็กจริง</p>
+                <div class="text-[10px] text-slate-400 mt-2 pt-2 border-t border-slate-800/80 space-y-0.5 font-mono">
+                    <div class="flex justify-between"><span>อัตราคิดคำนวณ:</span> <span class="text-amber-400 font-bold">0.30 ลบ.ฟุต/ตร.ม.</span></div>
+                    <div class="text-[9px] text-slate-500 italic mt-1">*มาตรฐานกรมบัญชีกลาง</div>
+                </div>
             </div>
+
+            <!-- Rebar Card -->
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 relative overflow-hidden group border-amber-500/20 flex flex-col justify-between">
+                <div>
+                    <div class="text-slate-400 text-[11px] font-medium uppercase tracking-wider flex items-center justify-between">
+                        <span>เหล็กเสริมรวม (+เผื่อ)</span>
+                        <i class="fa-solid fa-bars-staggered text-amber-400"></i>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span id="sum-rebar" class="text-xl sm:text-2xl font-black text-amber-400 font-mono">0.00</span>
+                        <span class="text-[11px] text-slate-400">กก.</span>
+                    </div>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-2 pt-2 border-t border-slate-800/80 space-y-0.5 font-mono">
+                    <div class="flex justify-between"><span>น้ำหนักเหล็กสุทธิ:</span> <span id="sum-rebar-net" class="text-slate-200 font-bold">0.00</span></div>
+                    <div class="text-[9px] text-slate-500 italic mt-1">*รวมระยะงอปลายและเหล็กพิเศษ</div>
+                </div>
+            </div>
+
+            <!-- Tie Wire Card -->
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 relative overflow-hidden group border-slate-700/50 flex flex-col justify-between">
+                <div>
+                    <div class="text-slate-400 text-[11px] font-medium uppercase tracking-wider flex items-center justify-between">
+                        <span>ลวดผูกเหล็ก #18</span>
+                        <i class="fa-solid fa-link text-slate-300"></i>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span id="sum-wire" class="text-xl sm:text-2xl font-black text-slate-200 font-mono">0.00</span>
+                        <span class="text-[11px] text-slate-400">กก.</span>
+                    </div>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-2 pt-2 border-t border-slate-800/80 space-y-0.5 font-mono">
+                    <div class="flex justify-between"><span>อัตราคิดคำนวณ:</span> <span class="text-slate-300 font-bold">3% เหล็กสุทธิ</span></div>
+                    <div class="text-[9px] text-slate-500 italic mt-1">*คิดจากเหล็กไม่รวมเผื่อเศษ</div>
+                </div>
+            </div>
+
+            <!-- Nails Card -->
+            <div class="glass-panel rounded-2xl p-3.5 sm:p-4 relative overflow-hidden group border-slate-700/50 flex flex-col justify-between">
+                <div>
+                    <div class="text-slate-400 text-[11px] font-medium uppercase tracking-wider flex items-center justify-between">
+                        <span>ตะปูยึดไม้แบบ</span>
+                        <i class="fa-solid fa-thumbtack text-rose-400"></i>
+                    </div>
+                    <div class="mt-2 flex items-baseline justify-between">
+                        <span id="sum-nails" class="text-xl sm:text-2xl font-black text-rose-400 font-mono">0.00</span>
+                        <span class="text-[11px] text-slate-400">กก.</span>
+                    </div>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-2 pt-2 border-t border-slate-800/80 space-y-0.5 font-mono">
+                    <div class="flex justify-between"><span>อัตราคิดคำนวณ:</span> <span class="text-rose-300 font-bold">0.25 กก./ตร.ม.</span></div>
+                    <div class="text-[9px] text-slate-500 italic mt-1">*ประมาณการตะปูตอกไม้แบบ</div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Global Steel Setting Controls -->
+        <!-- Global Steel & Timber Framing Settings -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 text-xs">
             <div class="flex items-center space-x-2 text-amber-400 font-bold">
                 <i class="fa-solid fa-sliders text-base"></i>
-                <span>กำหนดสัดส่วนระยะความยาวเหล็กเสริมพิเศษ (Fraction of Span Length):</span>
+                <span>กำหนดสัดส่วนเหล็กเสริมพิเศษ & อัตราการคิดไม้ประกอบแบบ:</span>
             </div>
             <div class="flex flex-wrap items-center gap-4">
                 <div class="flex items-center space-x-2">
@@ -194,6 +289,14 @@
                         <option value="1.00">L (1.00L)</option>
                     </select>
                 </div>
+                <div class="flex items-center space-x-2 border-l border-slate-800 pl-3">
+                    <span class="text-slate-400">ไม้คร่าวต่อไม้แบบ:</span>
+                    <select id="factor-batten-rate" onchange="calculateAll()" class="bg-slate-950 border border-slate-700 text-amber-300 font-bold px-2 py-1 rounded outline-none">
+                        <option value="0.30" selected>0.30 ลบ.ฟุต/ตร.ม.</option>
+                        <option value="0.25">0.25 ลบ.ฟุต/ตร.ม.</option>
+                        <option value="0.35">0.35 ลบ.ฟุต/ตร.ม.</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -203,19 +306,29 @@
                 <div>
                     <h2 class="text-base font-bold text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-network-wired text-amber-500"></i>
-                        รายการโครงสร้างคานต่อช่วง & เสาประคอง (Structural Multi-Span Framework)
+                        รายการโครงสร้างคานต่อช่วง & เสาประคอง (Multi-Span Framework)
                     </h2>
-                    <p class="text-xs text-slate-400 mt-0.5">เพิ่มช่วงคานเพื่อปรับเพิ่มจำนวนเสารับจุดตัดโดยอัตโนมัติ พร้อมรองรับคานยื่น (Cantilever)</p>
+                    <p class="text-xs text-slate-400 mt-0.5">รองรับคานคอดิน (GB), คานชั้น (B), และ <span class="text-purple-400 font-semibold">คานหลังคา (RB)</span> พร้อมระบบคำนวณค้ำยัน ไม้คร่าว และตะปูยึดแบบ</p>
                 </div>
-                <button onclick="addNewBeamLine()" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2 shadow-lg shadow-amber-500/20">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>เพิ่มสายคานใหม่ (New Beam Line)</span>
-                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="addNewBeamLine('GB')" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow-lg shadow-emerald-600/20">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>เพิ่ม คานคอดิน (GB)</span>
+                    </button>
+                    <button onclick="addNewBeamLine('B')" class="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow-lg shadow-sky-600/20">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>เพิ่ม คานชั้น (B)</span>
+                    </button>
+                    <button onclick="addNewBeamLine('RB')" class="px-3.5 py-2 bg-purple-500 hover:bg-purple-400 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow-lg shadow-purple-500/20">
+                        <i class="fa-solid fa-house-chimney"></i>
+                        <span>เพิ่ม คานหลังคา (RB)</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Beam Lines List Container -->
             <div id="beam-lines-container" class="space-y-6">
-                <!-- Beam lines rendered dynamically via JavaScript -->
+                <!-- Dynamic Content Rendered Here -->
             </div>
         </div>
 
@@ -239,12 +352,13 @@
                 <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1.5">
                     <div class="font-semibold text-slate-200 flex items-center gap-1.5">
                         <i class="fa-solid fa-circle-info text-amber-500"></i>
-                        มาตรฐานการดัดงอปลายอัตโนมัติ (Standard Hook Rules):
+                        หลักเกณฑ์และมาตรฐานการคำนวณราคากลาง (กรมบัญชีกลาง & สมาคมวิศวกรรมสถานแห่งประเทศไทย):
                     </div>
                     <ul class="list-disc list-inside text-[11px] space-y-1 text-slate-400">
-                        <li><b class="text-slate-200">เหล็กข้ออ้อย (DB12 - DB25):</b> ดัดงอฉาก $90^\circ$ Standard Hook คิดระยะดัดงอปลาย $12d_b$ โดยอัตโนมัติ</li>
-                        <li><b class="text-slate-200">เหล็กเส้นกลม/เหล็กปลอก (RB6 - RB9):</b> ดัดงอ $135^\circ$ ปลายปลอก คิดระยะงอ $6d_b$ โดยอัตโนมัติ</li>
-                        <li><b class="text-slate-200">คานยื่น (Cantilever):</b> จะไม่หักรอยต่อไม้แบบที่ปลายยื่น และคานยื่นจะคำนวณเหล็กบนฝังลึกเข้าเสาให้อัตโนมัติ</li>
+                        <li><b class="text-orange-400">ไม้ค้ำยันโครงสร้าง (Shoring Posts):</b> คำนวณเฉพาะคานชั้นยกระดับ (B) และคานหลังคา (RB) โดยคิด 1 ต้นทุกๆ ความยาวคานประมาณ 0.60 - 0.80 ม. (คานคอดิน GB ไม่คิดค้ำยันใต้ท้องคานเนื่องจากวางบนดิน) สำหรับเสาโครงสร้างที่สูงเกิน 2.50 ม. คิดไม้ค้ำยันยึดโยง 2 ต้น/เสา</li>
+                        <li><b class="text-amber-300">ไม้คร่าวประกอบไม้แบบ (Timber Battens):</b> คิดในอัตราส่วนมาตรฐาน 0.30 ลบ.ฟุต ต่อพื้นที่ไม้แบบหล่อคอนกรีต 1.0 ตร.ม.</li>
+                        <li><b class="text-rose-400">ตะปูยึดไม้แบบ (Nails):</b> คิดในอัตรา 0.25 กิโลกรัม ต่อพื้นที่ไม้แบบหล่อคอนกรีต 1.0 ตร.ม.</li>
+                        <li><b class="text-slate-200">เหล็กดัดงอปลาย (Hooks):</b> เหล็กข้ออ้อยคิด $12d_b$ ดัด $90^\circ$ / เหล็กปลอกคิด $6d_b$ ดัด $135^\circ$</li>
                     </ul>
                 </div>
             </div>
@@ -295,6 +409,7 @@
         <span id="toast-message">ดำเนินการสำเร็จ</span>
     </div>
 
+    <!-- JavaScript Application Logic -->
     <script>
         const STEEL_SPECS = {
             'RB6': { weight: 0.222, waste: 0.05, dbNominal: 0.006, isStirrup: true },
@@ -305,18 +420,18 @@
             'DB25': { weight: 3.853, waste: 0.09, dbNominal: 0.025, isStirrup: false }
         };
 
+        // Initializing multi-type structural beam lines
         let beamLines = [
             {
                 id: 1,
-                lineCode: 'GB1-Line',
+                beamType: 'GB', // GB, B, RB
+                lineCode: 'GB1-GroundLine',
                 spans: [
                     {
                         spanId: 101,
-                        name: 'B1 (Span 1)',
+                        name: 'GB1 (Span 1)',
                         isCantilever: false,
-                        width: 0.20,
-                        depth: 0.40,
-                        length: 4.00,
+                        width: 0.20, depth: 0.40, length: 4.00,
                         topQty: 2, topType: 'DB12',
                         botQty: 2, botType: 'DB12',
                         extraTopQty: 1, extraTopType: 'DB12',
@@ -326,11 +441,9 @@
                     },
                     {
                         spanId: 102,
-                        name: 'B1 (Span 2)',
+                        name: 'GB1 (Span 2)',
                         isCantilever: false,
-                        width: 0.20,
-                        depth: 0.40,
-                        length: 4.50,
+                        width: 0.20, depth: 0.40, length: 4.50,
                         topQty: 2, topType: 'DB12',
                         botQty: 2, botType: 'DB12',
                         extraTopQty: 2, extraTopType: 'DB12',
@@ -344,6 +457,42 @@
                     { colId: 202, name: 'C1-2', position: 'middle', width: 0.25, depth: 0.25, height: 1.50, mainQty: 4, mainType: 'DB16', stirrupType: 'RB6', stirrupSpacing: 0.15 },
                     { colId: 203, name: 'C1-3', position: 'last', width: 0.25, depth: 0.25, height: 1.50, mainQty: 4, mainType: 'DB16', stirrupType: 'RB6', stirrupSpacing: 0.15 }
                 ]
+            },
+            {
+                id: 2,
+                beamType: 'RB', // Roof Beam line sample
+                lineCode: 'RB1-RoofLine',
+                spans: [
+                    {
+                        spanId: 301,
+                        name: 'RB1 (Roof Main)',
+                        isCantilever: false,
+                        width: 0.20, depth: 0.35, length: 5.00,
+                        topQty: 2, topType: 'DB12',
+                        botQty: 2, botType: 'DB12',
+                        extraTopQty: 1, extraTopType: 'DB12',
+                        extraMidQty: 0, extraMidType: 'DB12',
+                        extraBotQty: 1, extraBotType: 'DB12',
+                        stirrupType: 'RB6', stirrupSpacing: 0.20
+                    },
+                    {
+                        spanId: 302,
+                        name: 'RB1-Overhang (Cantilever)',
+                        isCantilever: true,
+                        width: 0.20, depth: 0.35, length: 1.20,
+                        topQty: 2, topType: 'DB12',
+                        botQty: 2, botType: 'DB12',
+                        extraTopQty: 1, extraTopType: 'DB12',
+                        extraMidQty: 0, extraMidType: 'DB12',
+                        extraBotQty: 0, extraBotType: 'DB12',
+                        stirrupType: 'RB6', stirrupSpacing: 0.15
+                    }
+                ],
+                columns: [
+                    { colId: 401, name: 'RC1-1', position: 'first', width: 0.20, depth: 0.20, height: 3.50, mainQty: 4, mainType: 'DB12', stirrupType: 'RB6', stirrupSpacing: 0.20 },
+                    { colId: 402, name: 'RC1-2', position: 'middle', width: 0.20, depth: 0.20, height: 3.50, mainQty: 4, mainType: 'DB12', stirrupType: 'RB6', stirrupSpacing: 0.20 },
+                    { colId: 403, name: 'RC1-3', position: 'last', width: 0.20, depth: 0.20, height: 3.50, mainQty: 4, mainType: 'DB12', stirrupType: 'RB6', stirrupSpacing: 0.20 }
+                ]
             }
         ];
 
@@ -352,27 +501,26 @@
             calculateAll();
         };
 
-        // Automatic Standard Hook Calculation based on ACI/EIT Code
+        // Automatic Standard Hook Calculation
         function getAutoStandardHook(dbType) {
             const spec = STEEL_SPECS[dbType];
             if (!spec) return 0;
             const db = spec.dbNominal;
-            // RB6/RB9 Stirrup standard hook 135 deg = 6*db
-            // DB12-DB25 Main rebar standard hook 90 deg = 12*db
             return spec.isStirrup ? (6 * db) : (12 * db);
         }
 
         function syncColumnsWithSpans(line) {
             const requiredColumnsCount = line.spans.length + 1;
+            const prefix = line.beamType === 'RB' ? 'RC' : 'C';
             
             while (line.columns.length < requiredColumnsCount) {
                 const nextNum = line.columns.length + 1;
                 line.columns.push({
                     colId: Date.now() + Math.random(),
-                    name: `C${line.id}-${nextNum}`,
+                    name: `${prefix}${line.id}-${nextNum}`,
                     position: 'middle',
-                    width: 0.25, depth: 0.25, height: 1.50,
-                    mainQty: 4, mainType: 'DB16',
+                    width: 0.20, depth: 0.20, height: line.beamType === 'RB' ? 3.50 : 1.50,
+                    mainQty: 4, mainType: 'DB12',
                     stirrupType: 'RB6', stirrupSpacing: 0.15
                 });
             }
@@ -394,22 +542,44 @@
 
             beamLines.forEach((line, lineIndex) => {
                 const lineDiv = document.createElement('div');
-                lineDiv.className = "bg-slate-950/80 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4";
+                
+                let badgeColor = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+                let badgeText = "คานทั่วไป";
+                if (line.beamType === 'GB') {
+                    badgeColor = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+                    badgeText = "คานคอดิน (GB)";
+                } else if (line.beamType === 'B') {
+                    badgeColor = "bg-sky-500/10 text-sky-400 border-sky-500/20";
+                    badgeText = "คานชั้น (B)";
+                } else if (line.beamType === 'RB') {
+                    badgeColor = "bg-purple-500/10 text-purple-400 border-purple-500/20";
+                    badgeText = "คานหลังคา (RB)";
+                }
+
+                lineDiv.className = "bg-slate-950/80 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4 relative overflow-hidden";
 
                 lineDiv.innerHTML = `
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
-                        <div class="flex items-center space-x-3">
-                            <span class="bg-amber-500/10 text-amber-400 font-bold px-2.5 py-1 rounded-lg border border-amber-500/20 text-xs font-mono">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="bg-slate-900 text-slate-300 font-bold px-2.5 py-1 rounded-lg border border-slate-800 text-xs font-mono">
                                 สายที่ ${lineIndex + 1}
                             </span>
-                            <input type="text" value="${line.lineCode}" onchange="updateLineCode(${line.id}, this.value)" class="bg-slate-900 border border-slate-700 text-slate-100 font-bold px-3 py-1.5 rounded-lg text-xs outline-none focus:border-amber-500 min-w-[120px]">
+
+                            <select onchange="updateBeamType(${line.id}, this.value)" class="bg-slate-900 border border-slate-700 font-bold px-2.5 py-1 rounded-lg text-xs outline-none focus:border-amber-500 ${badgeColor}">
+                                <option value="GB" ${line.beamType === 'GB' ? 'selected' : ''}>คานคอดิน (GB)</option>
+                                <option value="B" ${line.beamType === 'B' ? 'selected' : ''}>คานชั้น (B)</option>
+                                <option value="RB" ${line.beamType === 'RB' ? 'selected' : ''}>คานหลังคา (RB)</option>
+                            </select>
+
+                            <input type="text" value="${line.lineCode}" onchange="updateLineCode(${line.id}, this.value)" class="bg-slate-900 border border-slate-700 text-slate-100 font-bold px-3 py-1 rounded-lg text-xs outline-none focus:border-amber-500 min-w-[140px]">
                         </div>
+                        
                         <div class="flex items-center space-x-2">
                             <button onclick="addSpanToLine(${line.id})" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-lg border border-slate-700 transition flex items-center space-x-1">
                                 <i class="fa-solid fa-plus text-amber-400"></i>
-                                <span>เพิ่มช่วงคาน (เพิ่มเสาอัตโนมัติ)</span>
+                                <span>เพิ่มช่วงคาน</span>
                             </button>
-                            <button onclick="deleteBeamLine(${line.id})" class="text-slate-500 hover:text-red-400 p-1.5">
+                            <button onclick="deleteBeamLine(${line.id})" class="text-slate-500 hover:text-red-400 p-1.5" title="ลบสายงาน">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -418,27 +588,28 @@
                     <!-- Spans Table -->
                     <div class="space-y-2">
                         <div class="text-xs font-semibold text-amber-400 flex items-center justify-between">
-                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-horizontal"></i> รายการช่วงคาน (Beam Spans)</span>
-                            <span class="text-[11px] text-slate-400 font-normal">*ติ๊กช่อง "คานยื่น" เมื่อเป็นคาน Cantilever</span>
+                            <span class="flex items-center gap-1.5"><i class="fa-solid fa-ruler-horizontal"></i> รายการช่วงคาน (${badgeText})</span>
+                            <span class="text-[11px] text-slate-400 font-normal">*ติ๊ก "คานยื่น" เมื่อเป็น Cantilever</span>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse min-w-[1200px]">
+                            <table class="w-full text-left text-xs border-collapse min-w-[1300px]">
                                 <thead class="bg-slate-900 text-slate-400 text-[11px] uppercase border-b border-slate-800">
                                     <tr>
-                                        <th class="p-2 min-w-[70px]">คานยื่น</th>
+                                        <th class="p-2 min-w-[60px]">คานยื่น</th>
                                         <th class="p-2 font-mono min-w-[110px]">ชื่อช่วง</th>
-                                        <th class="p-2 min-w-[130px]">ขนาด กxล (ม.)</th>
-                                        <th class="p-2 min-w-[90px]">ยาว L (ม.)</th>
-                                        <th class="p-2 min-w-[130px]">เหล็กบน</th>
-                                        <th class="p-2 min-w-[130px]">เหล็กล่าง</th>
-                                        <th class="p-2 min-w-[130px]">พิเศษบน</th>
-                                        <th class="p-2 min-w-[130px]">พิเศษกลาง</th>
-                                        <th class="p-2 min-w-[130px]">พิเศษล่าง</th>
-                                        <th class="p-2 min-w-[150px]">เหล็กปลอก</th>
-                                        <th class="p-2 text-right min-w-[90px]">คอนกรีต (ม³)</th>
-                                        <th class="p-2 text-right min-w-[90px]">ไม้แบบ (ม²)</th>
-                                        <th class="p-2 text-right min-w-[100px]">เหล็กเสริม (กก.)</th>
-                                        <th class="p-2 text-center min-w-[50px]">ลบ</th>
+                                        <th class="p-2 min-w-[120px]">ขนาด กxล (ม.)</th>
+                                        <th class="p-2 min-w-[80px]">ยาว L (ม.)</th>
+                                        <th class="p-2 min-w-[120px]">เหล็กบน</th>
+                                        <th class="p-2 min-w-[120px]">เหล็กล่าง</th>
+                                        <th class="p-2 min-w-[120px]">พิเศษบน</th>
+                                        <th class="p-2 min-w-[120px]">พิเศษกลาง</th>
+                                        <th class="p-2 min-w-[120px]">พิเศษล่าง</th>
+                                        <th class="p-2 min-w-[140px]">เหล็กปลอก</th>
+                                        <th class="p-2 text-right min-w-[80px]">คอนกรีต(ม³)</th>
+                                        <th class="p-2 text-right min-w-[80px]">ไม้แบบ(ม²)</th>
+                                        <th class="p-2 text-right min-w-[70px]">ค้ำยัน(ต้น)</th>
+                                        <th class="p-2 text-right min-w-[90px]">เหล็กรวม(กก.)</th>
+                                        <th class="p-2 text-center min-w-[40px]">ลบ</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-800/50">
@@ -455,18 +626,19 @@
                             <span class="text-[11px] text-slate-400 font-normal">จำนวนเสาถูกซิงค์อัตโนมัติ (${line.columns.length} ต้น)</span>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs border-collapse min-w-[900px]">
+                            <table class="w-full text-left text-xs border-collapse min-w-[950px]">
                                 <thead class="bg-slate-900 text-slate-400 text-[11px] uppercase border-b border-slate-800">
                                     <tr>
-                                        <th class="p-2 font-mono min-w-[120px]">ชื่อเสา</th>
-                                        <th class="p-2 min-w-[120px]">ตำแหน่งเสา</th>
-                                        <th class="p-2 min-w-[130px]">ขนาด กxล (ม.)</th>
-                                        <th class="p-2 min-w-[90px]">ความสูง H (ม.)</th>
-                                        <th class="p-2 min-w-[140px]">เหล็กแกน (Main Rebar)</th>
-                                        <th class="p-2 min-w-[150px]">เหล็กปลอกเสา</th>
-                                        <th class="p-2 text-right min-w-[90px]">คอนกรีต (ม³)</th>
-                                        <th class="p-2 text-right min-w-[90px]">ไม้แบบ (ม²)</th>
-                                        <th class="p-2 text-right min-w-[100px]">เหล็กเสริม (กก.)</th>
+                                        <th class="p-2 font-mono min-w-[110px]">ชื่อเสา</th>
+                                        <th class="p-2 min-w-[110px]">ตำแหน่งเสา</th>
+                                        <th class="p-2 min-w-[120px]">ขนาด กxล (ม.)</th>
+                                        <th class="p-2 min-w-[80px]">ความสูง H (ม.)</th>
+                                        <th class="p-2 min-w-[130px]">เหล็กแกน (Main Rebar)</th>
+                                        <th class="p-2 min-w-[140px]">เหล็กปลอกเสา</th>
+                                        <th class="p-2 text-right min-w-[80px]">คอนกรีต(ม³)</th>
+                                        <th class="p-2 text-right min-w-[80px]">ไม้แบบ(ม²)</th>
+                                        <th class="p-2 text-right min-w-[70px]">ค้ำยัน(ต้น)</th>
+                                        <th class="p-2 text-right min-w-[90px]">เหล็กรวม(กก.)</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-800/50">
@@ -492,9 +664,9 @@
                     </td>
                     <td class="p-2">
                         <div class="flex items-center space-x-1">
-                            <input type="number" step="0.01" value="${span.width}" onchange="updateSpan(${lineId}, ${span.spanId}, 'width', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
+                            <input type="number" step="0.01" value="${span.width}" onchange="updateSpan(${lineId}, ${span.spanId}, 'width', parseFloat(this.value))" class="w-13 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
                             <span class="text-slate-500">x</span>
-                            <input type="number" step="0.01" value="${span.depth}" onchange="updateSpan(${lineId}, ${span.spanId}, 'depth', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
+                            <input type="number" step="0.01" value="${span.depth}" onchange="updateSpan(${lineId}, ${span.spanId}, 'depth', parseFloat(this.value))" class="w-13 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
                         </div>
                     </td>
                     <td class="p-2">
@@ -502,31 +674,31 @@
                     </td>
                     <td class="p-2">
                         <div class="flex items-center space-x-1">
-                            <input type="number" value="${span.topQty}" onchange="updateSpan(${lineId}, ${span.spanId}, 'topQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            <input type="number" value="${span.topQty}" onchange="updateSpan(${lineId}, ${span.spanId}, 'topQty', parseInt(this.value))" class="w-11 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
                             ${getSteelSelectHTML('span', lineId, span.spanId, 'topType', span.topType)}
                         </div>
                     </td>
                     <td class="p-2">
                         <div class="flex items-center space-x-1">
-                            <input type="number" value="${span.botQty}" onchange="updateSpan(${lineId}, ${span.spanId}, 'botQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            <input type="number" value="${span.botQty}" onchange="updateSpan(${lineId}, ${span.spanId}, 'botQty', parseInt(this.value))" class="w-11 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
                             ${getSteelSelectHTML('span', lineId, span.spanId, 'botType', span.botType)}
                         </div>
                     </td>
                     <td class="p-2">
                         <div class="flex items-center space-x-1">
-                            <input type="number" value="${span.extraTopQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraTopQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            <input type="number" value="${span.extraTopQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraTopQty', parseInt(this.value))" class="w-11 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
                             ${getSteelSelectHTML('span', lineId, span.spanId, 'extraTopType', span.extraTopType || 'DB12')}
                         </div>
                     </td>
                     <td class="p-2">
                         <div class="flex items-center space-x-1">
-                            <input type="number" value="${span.extraMidQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraMidQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            <input type="number" value="${span.extraMidQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraMidQty', parseInt(this.value))" class="w-11 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
                             ${getSteelSelectHTML('span', lineId, span.spanId, 'extraMidType', span.extraMidType || 'DB12')}
                         </div>
                     </td>
                     <td class="p-2">
                         <div class="flex items-center space-x-1">
-                            <input type="number" value="${span.extraBotQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraBotQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            <input type="number" value="${span.extraBotQty || 0}" onchange="updateSpan(${lineId}, ${span.spanId}, 'extraBotQty', parseInt(this.value))" class="w-11 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
                             ${getSteelSelectHTML('span', lineId, span.spanId, 'extraBotType', span.extraBotType || 'DB12')}
                         </div>
                     </td>
@@ -534,11 +706,12 @@
                         <div class="flex items-center space-x-1">
                             ${getSteelSelectHTML('span', lineId, span.spanId, 'stirrupType', span.stirrupType, true)}
                             <span class="text-slate-500">@</span>
-                            <input type="number" step="0.01" value="${span.stirrupSpacing}" onchange="updateSpan(${lineId}, ${span.spanId}, 'stirrupSpacing', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            <input type="number" step="0.01" value="${span.stirrupSpacing}" onchange="updateSpan(${lineId}, ${span.spanId}, 'stirrupSpacing', parseFloat(this.value))" class="w-13 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
                         </div>
                     </td>
                     <td class="p-2 text-right font-mono font-semibold text-slate-200" id="span-conc-${span.spanId}">0.00</td>
-                    <td class="p-2 text-right font-mono font-semibold text-slate-200" id="span-form-${span.spanId}">0.00</td>
+                    <td class="p-2 text-right font-mono font-semibold text-emerald-400" id="span-form-${span.spanId}">0.00</td>
+                    <td class="p-2 text-right font-mono font-semibold text-orange-400" id="span-shor-${span.spanId}">0</td>
                     <td class="p-2 text-right font-mono font-bold text-amber-400" id="span-rebar-${span.spanId}">0.00</td>
                     <td class="p-2 text-center">
                         <button onclick="deleteSpan(${lineId}, ${span.spanId})" class="text-slate-500 hover:text-red-400">
@@ -572,9 +745,9 @@
                     </td>
                     <td class="p-2">
                         <div class="flex items-center space-x-1">
-                            <input type="number" step="0.01" value="${col.width}" onchange="updateColumn(${lineId}, ${col.colId}, 'width', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
+                            <input type="number" step="0.01" value="${col.width}" onchange="updateColumn(${lineId}, ${col.colId}, 'width', parseFloat(this.value))" class="w-13 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
                             <span class="text-slate-500">x</span>
-                            <input type="number" step="0.01" value="${col.depth}" onchange="updateColumn(${lineId}, ${col.colId}, 'depth', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
+                            <input type="number" step="0.01" value="${col.depth}" onchange="updateColumn(${lineId}, ${col.colId}, 'depth', parseFloat(this.value))" class="w-13 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded text-xs font-mono">
                         </div>
                     </td>
                     <td class="p-2">
@@ -582,7 +755,7 @@
                     </td>
                     <td class="p-2">
                         <div class="flex items-center space-x-1">
-                            <input type="number" value="${col.mainQty}" onchange="updateColumn(${lineId}, ${col.colId}, 'mainQty', parseInt(this.value))" class="w-12 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            <input type="number" value="${col.mainQty}" onchange="updateColumn(${lineId}, ${col.colId}, 'mainQty', parseInt(this.value))" class="w-11 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
                             ${getSteelSelectHTML('col', lineId, col.colId, 'mainType', col.mainType)}
                         </div>
                     </td>
@@ -590,11 +763,12 @@
                         <div class="flex items-center space-x-1">
                             ${getSteelSelectHTML('col', lineId, col.colId, 'stirrupType', col.stirrupType, true)}
                             <span class="text-slate-500">@</span>
-                            <input type="number" step="0.01" value="${col.stirrupSpacing}" onchange="updateColumn(${lineId}, ${col.colId}, 'stirrupSpacing', parseFloat(this.value))" class="w-14 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
+                            <input type="number" step="0.01" value="${col.stirrupSpacing}" onchange="updateColumn(${lineId}, ${col.colId}, 'stirrupSpacing', parseFloat(this.value))" class="w-13 bg-slate-900 border border-slate-700 px-1.5 py-1.5 rounded font-mono">
                         </div>
                     </td>
                     <td class="p-2 text-right font-mono font-semibold text-slate-200" id="col-conc-${col.colId}">0.00</td>
-                    <td class="p-2 text-right font-mono font-semibold text-slate-200" id="col-form-${col.colId}">0.00</td>
+                    <td class="p-2 text-right font-mono font-semibold text-emerald-400" id="col-form-${col.colId}">0.00</td>
+                    <td class="p-2 text-right font-mono font-semibold text-orange-400" id="col-shor-${col.colId}">0</td>
                     <td class="p-2 text-right font-mono font-bold text-amber-400" id="col-rebar-${col.colId}">0.00</td>
                 </tr>
             `;
@@ -603,7 +777,7 @@
         function getSteelSelectHTML(type, lineId, elemId, field, currentValue, isStirrup = false) {
             const options = isStirrup ? ['RB6', 'RB9'] : ['DB12', 'DB16', 'DB20', 'DB25'];
             const handler = type === 'span' ? `updateSpan(${lineId}, ${elemId}, '${field}', this.value)` : `updateColumn(${lineId}, ${elemId}, '${field}', this.value)`;
-            let html = `<select onchange="${handler}" class="bg-slate-900 border border-slate-700 text-slate-200 px-2 py-1.5 rounded text-xs outline-none min-w-[65px]">`;
+            let html = `<select onchange="${handler}" class="bg-slate-900 border border-slate-700 text-slate-200 px-1.5 py-1.5 rounded text-xs outline-none min-w-[60px]">`;
             options.forEach(opt => {
                 html += `<option value="${opt}" ${opt === currentValue ? 'selected' : ''}>${opt}</option>`;
             });
@@ -611,23 +785,25 @@
             return html;
         }
 
-        function addNewBeamLine() {
+        function addNewBeamLine(defaultType = 'GB') {
             const newId = beamLines.length > 0 ? Math.max(...beamLines.map(l => l.id)) + 1 : 1;
+            const prefix = defaultType;
             const newLine = {
                 id: newId,
-                lineCode: `Line-${newId}`,
+                beamType: defaultType,
+                lineCode: `${prefix}${newId}-Line`,
                 spans: [
                     {
                         spanId: newId * 100 + 1,
-                        name: `B${newId} (Span 1)`,
+                        name: `${prefix}${newId} (Span 1)`,
                         isCantilever: false,
-                        width: 0.20, depth: 0.40, length: 4.00,
+                        width: 0.20, depth: defaultType === 'RB' ? 0.35 : 0.40, length: 4.00,
                         topQty: 2, topType: 'DB12',
                         botQty: 2, botType: 'DB12',
                         extraTopQty: 1, extraTopType: 'DB12',
                         extraMidQty: 0, extraMidType: 'DB12',
                         extraBotQty: 1, extraBotType: 'DB12',
-                        stirrupType: 'RB6', stirrupSpacing: 0.15
+                        stirrupType: 'RB6', stirrupSpacing: defaultType === 'RB' ? 0.20 : 0.15
                     }
                 ],
                 columns: []
@@ -638,15 +814,28 @@
             calculateAll();
         }
 
+        function updateBeamType(lineId, newType) {
+            const line = beamLines.find(l => l.id === lineId);
+            if (line) {
+                line.beamType = newType;
+                if (!line.lineCode.includes('-')) {
+                    line.lineCode = `${newType}${line.id}-Line`;
+                }
+                renderBeamLines();
+                calculateAll();
+            }
+        }
+
         function addSpanToLine(lineId) {
             const line = beamLines.find(l => l.id === lineId);
             if (line) {
                 const nextNum = line.spans.length + 1;
+                const prefix = line.beamType || 'B';
                 line.spans.push({
                     spanId: Date.now() + Math.random(),
-                    name: `Span ${nextNum}`,
+                    name: `${prefix} Span ${nextNum}`,
                     isCantilever: false,
-                    width: 0.20, depth: 0.40, length: 4.00,
+                    width: 0.20, depth: line.beamType === 'RB' ? 0.35 : 0.40, length: 4.00,
                     topQty: 2, topType: 'DB12',
                     botQty: 2, botType: 'DB12',
                     extraTopQty: 0, extraTopType: 'DB12',
@@ -709,13 +898,25 @@
 
         function calculateAll() {
             let totalConcrete = 0;
+            let totalGBConcrete = 0;
+            let totalElevatedConcrete = 0;
+            let totalColConcrete = 0;
+
             let totalFormwork = 0;
+            let totalBeamFormwork = 0;
+            let totalColFormwork = 0;
+
+            let totalShoringPosts = 0;
+            let totalBeamShoring = 0;
+            let totalColShoring = 0;
+
             let totalNetSteelWeight = 0;
             let totalRebarWeightWithWaste = 0;
 
             const factorTop = parseFloat(document.getElementById('factor-extra-top')?.value || 0.33);
             const factorMid = parseFloat(document.getElementById('factor-extra-mid')?.value || 1.00);
             const factorBot = parseFloat(document.getElementById('factor-extra-bot')?.value || 0.70);
+            const battenRate = parseFloat(document.getElementById('factor-batten-rate')?.value || 0.30);
 
             const rebarBySize = {
                 'RB6': 0, 'RB9': 0, 'DB12': 0, 'DB16': 0, 'DB20': 0, 'DB25': 0
@@ -732,13 +933,28 @@
                 line.spans.forEach(span => {
                     const conc = span.width * span.depth * span.length;
                     totalConcrete += conc;
+                    if (line.beamType === 'GB') {
+                        totalGBConcrete += conc;
+                    } else {
+                        totalElevatedConcrete += conc;
+                    }
 
-                    // Formwork Calculation: Cantilever uses full 3 sides (doesn't deduct end column)
+                    // Formwork Calculation
                     const form = ((2 * span.depth) + span.width) * span.length;
                     totalFormwork += form;
+                    totalBeamFormwork += form;
+
+                    // Shoring Calculation for Elevated Beams (B & RB)
+                    // Ground Beams (GB) resting on ground do not require bottom shoring posts
+                    let spanShoring = 0;
+                    if (line.beamType === 'B' || line.beamType === 'RB') {
+                        spanShoring = Math.ceil(span.length / 0.75); // 1 post per 0.75m span
+                    }
+                    totalBeamShoring += spanShoring;
+                    totalShoringPosts += spanShoring;
 
                     // Standard Auto Hooks
-                    const topHook = getAutoStandardHook(span.topType) * (span.isCantilever ? 2.5 : 2); // Extra anchorage for cantilever top steel
+                    const topHook = getAutoStandardHook(span.topType) * (span.isCantilever ? 2.5 : 2);
                     const botHook = getAutoStandardHook(span.botType) * 2;
 
                     const topNet = span.topQty * (span.length + topHook) * STEEL_SPECS[span.topType].weight;
@@ -770,16 +986,19 @@
 
                     const concEl = document.getElementById(`span-conc-${span.spanId}`);
                     const formEl = document.getElementById(`span-form-${span.spanId}`);
+                    const shorEl = document.getElementById(`span-shor-${span.spanId}`);
                     const rebarEl = document.getElementById(`span-rebar-${span.spanId}`);
 
                     if(concEl) concEl.innerText = conc.toFixed(2);
                     if(formEl) formEl.innerText = form.toFixed(2);
+                    if(shorEl) shorEl.innerText = spanShoring;
                     if(rebarEl) rebarEl.innerText = totalSpanRebarWaste.toFixed(2);
                 });
 
                 line.columns.forEach(col => {
                     const conc = col.width * col.depth * col.height;
                     totalConcrete += conc;
+                    totalColConcrete += conc;
 
                     const fullColumnFormwork = 2 * (col.width + col.depth) * col.height;
                     let beamJointDeduction = 0;
@@ -792,6 +1011,12 @@
 
                     const form = Math.max(0, fullColumnFormwork - beamJointDeduction);
                     totalFormwork += form;
+                    totalColFormwork += form;
+
+                    // Shoring for Columns: Tall columns H > 2.5m use 2 diagonal braces
+                    let colShoring = col.height > 2.50 ? 2 : 0;
+                    totalColShoring += colShoring;
+                    totalShoringPosts += colShoring;
 
                     const colHook = getAutoStandardHook(col.mainType);
                     const effColHeight = col.height + colHook;
@@ -809,10 +1034,12 @@
 
                     const concEl = document.getElementById(`col-conc-${col.colId}`);
                     const formEl = document.getElementById(`col-form-${col.colId}`);
+                    const shorEl = document.getElementById(`col-shor-${col.colId}`);
                     const rebarEl = document.getElementById(`col-rebar-${col.colId}`);
 
                     if(concEl) concEl.innerText = conc.toFixed(2);
                     if(formEl) formEl.innerText = form.toFixed(2);
+                    if(shorEl) shorEl.innerText = colShoring;
                     if(rebarEl) rebarEl.innerText = totalColRebarWaste.toFixed(2);
                 });
             });
@@ -823,11 +1050,28 @@
             }
 
             const totalWire = totalNetSteelWeight * 0.03;
+            const totalBattens = totalFormwork * battenRate; // cu.ft
+            const totalNails = totalFormwork * 0.25; // kg
 
+            // Update Summary Dashboard Cards
             document.getElementById('sum-concrete').innerText = totalConcrete.toFixed(2);
+            document.getElementById('sum-gb-concrete').innerText = totalGBConcrete.toFixed(2);
+            document.getElementById('sum-elevated-concrete').innerText = totalElevatedConcrete.toFixed(2);
+            document.getElementById('sum-col-concrete').innerText = totalColConcrete.toFixed(2);
+
             document.getElementById('sum-formwork').innerText = totalFormwork.toFixed(2);
+            document.getElementById('sum-beam-formwork').innerText = totalBeamFormwork.toFixed(2);
+            document.getElementById('sum-col-formwork').innerText = totalColFormwork.toFixed(2);
+
+            document.getElementById('sum-shoring').innerText = totalShoringPosts;
+            document.getElementById('sum-beam-shoring').innerText = totalBeamShoring;
+            document.getElementById('sum-col-shoring').innerText = totalColShoring;
+
+            document.getElementById('sum-battens').innerText = totalBattens.toFixed(2);
             document.getElementById('sum-rebar').innerText = totalRebarWeightWithWaste.toFixed(2);
+            document.getElementById('sum-rebar-net').innerText = totalNetSteelWeight.toFixed(2);
             document.getElementById('sum-wire').innerText = totalWire.toFixed(2);
+            document.getElementById('sum-nails').innerText = totalNails.toFixed(2);
 
             renderRebarBreakdown(rebarBySize);
         }
@@ -875,15 +1119,17 @@
             const wb = XLSX.utils.book_new();
 
             const detailedRows = [
-                ["สายงาน", "องค์อาคาร", "ตำแหน่ง/ประเภท", "กว้าง (ม.)", "ลึก/สูง (ม.)", "ยาว (ม.)", "คอนกรีต (ลบ.ม.)", "ไม้แบบ (ตร.ม.)", "เหล็กเสริมรวมเผื่อ (กก.)", "ลวดผูกเหล็ก 3% (กก.)"]
+                ["ประเภทโครงสร้าง", "สายงาน", "องค์อาคาร", "ประเภทช่วง", "กว้าง (ม.)", "ลึก/สูง (ม.)", "ยาว (ม.)", "คอนกรีต (ลบ.ม.)", "ไม้แบบ (ตร.ม.)", "ไม้ค้ำยัน (ต้น)", "ไม้คร่าว (ลบ.ฟุต)", "ตะปู (กก.)", "เหล็กเสริมรวมเผื่อ (กก.)", "ลวดผูกเหล็ก 3% (กก.)"]
             ];
 
-            let grandConc = 0, grandForm = 0, grandRebar = 0, grandWire = 0;
+            let grandConc = 0, grandForm = 0, grandShor = 0, grandBatt = 0, grandNails = 0, grandRebar = 0, grandWire = 0;
             const factorTop = parseFloat(document.getElementById('factor-extra-top')?.value || 0.33);
             const factorMid = parseFloat(document.getElementById('factor-extra-mid')?.value || 1.00);
             const factorBot = parseFloat(document.getElementById('factor-extra-bot')?.value || 0.70);
+            const battenRate = parseFloat(document.getElementById('factor-batten-rate')?.value || 0.30);
 
             const posTextMap = { 'first': 'ต้นแรก', 'middle': 'ต้นกลาง', 'last': 'ต้นสุดท้าย' };
+            const typeTextMap = { 'GB': 'คานคอดิน (GB)', 'B': 'คานชั้น (B)', 'RB': 'คานหลังคา (RB)' };
 
             beamLines.forEach(line => {
                 let avgBeamWidth = 0.20;
@@ -893,10 +1139,15 @@
                     avgBeamDepth = line.spans.reduce((sum, s) => sum + s.depth, 0) / line.spans.length;
                 }
 
+                const typeLabel = typeTextMap[line.beamType] || 'คานทั่วไป';
+
                 line.spans.forEach(s => {
                     const conc = parseFloat((s.width * s.depth * s.length).toFixed(2));
                     const form = parseFloat((((2 * s.depth) + s.width) * s.length).toFixed(2));
-                    
+                    const shor = (line.beamType === 'B' || line.beamType === 'RB') ? Math.ceil(s.length / 0.75) : 0;
+                    const batt = parseFloat((form * battenRate).toFixed(2));
+                    const nail = parseFloat((form * 0.25).toFixed(2));
+
                     const topHook = getAutoStandardHook(s.topType) * (s.isCantilever ? 2.5 : 2);
                     const botHook = getAutoStandardHook(s.botType) * 2;
 
@@ -919,8 +1170,8 @@
                     const rebar = parseFloat((topN + botN + extraTopN + extraMidN + extraBotN + stN).toFixed(2));
                     const wire = parseFloat((rebarNet * 0.03).toFixed(2));
 
-                    grandConc += conc; grandForm += form; grandRebar += rebar; grandWire += wire;
-                    detailedRows.push([line.lineCode, s.name, s.isCantilever ? "คานยื่น" : "ช่วงคาน", s.width, s.depth, s.length, conc, form, rebar, wire]);
+                    grandConc += conc; grandForm += form; grandShor += shor; grandBatt += batt; grandNails += nail; grandRebar += rebar; grandWire += wire;
+                    detailedRows.push([typeLabel, line.lineCode, s.name, s.isCantilever ? "คานยื่น" : "ช่วงคาน", s.width, s.depth, s.length, conc, form, shor, batt, nail, rebar, wire]);
                 });
 
                 line.columns.forEach(c => {
@@ -928,7 +1179,10 @@
                     const fullColumnFormwork = 2 * (c.width + c.depth) * c.height;
                     let beamJointDeduction = (c.position === 'middle') ? (2 * avgBeamWidth * avgBeamDepth) : (avgBeamWidth * avgBeamDepth);
                     const form = parseFloat((Math.max(0, fullColumnFormwork - beamJointDeduction)).toFixed(2));
-                    
+                    const shor = c.height > 2.50 ? 2 : 0;
+                    const batt = parseFloat((form * battenRate).toFixed(2));
+                    const nail = parseFloat((form * 0.25).toFixed(2));
+
                     const colHook = getAutoStandardHook(c.mainType);
                     const effColHeight = c.height + colHook;
 
@@ -942,13 +1196,13 @@
                     const rebar = parseFloat((mainN + stN).toFixed(2));
                     const wire = parseFloat((rebarNet * 0.03).toFixed(2));
 
-                    grandConc += conc; grandForm += form; grandRebar += rebar; grandWire += wire;
-                    detailedRows.push([line.lineCode, c.name, `เสา (${posTextMap[c.position] || 'เสา'})`, c.width, c.depth, c.height, conc, form, rebar, wire]);
+                    grandConc += conc; grandForm += form; grandShor += shor; grandBatt += batt; grandNails += nail; grandRebar += rebar; grandWire += wire;
+                    detailedRows.push([typeLabel, line.lineCode, c.name, `เสา (${posTextMap[c.position] || 'เสา'})`, c.width, c.depth, c.height, conc, form, shor, batt, nail, rebar, wire]);
                 });
             });
 
             detailedRows.push([]);
-            detailedRows.push(["รวมทั้งโครงการ", "", "", "", "", "", grandConc.toFixed(2), grandForm.toFixed(2), grandRebar.toFixed(2), grandWire.toFixed(2)]);
+            detailedRows.push(["รวมทั้งโครงการ", "", "", "", "", "", "", grandConc.toFixed(2), grandForm.toFixed(2), grandShor, grandBatt.toFixed(2), grandNails.toFixed(2), grandRebar.toFixed(2), grandWire.toFixed(2)]);
 
             const wsDetailed = XLSX.utils.aoa_to_sheet(detailedRows);
             XLSX.utils.book_append_sheet(wb, wsDetailed, "ตารางรายการคำนวณ BOQ");
